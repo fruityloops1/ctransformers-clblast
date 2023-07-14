@@ -22,6 +22,7 @@ set(CMAKE_C_STANDARD 11)
 set(CMAKE_C_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(THREADS_PREFER_PTHREAD_FLAG ON)
 find_package(Threads REQUIRED)
 
@@ -133,6 +134,14 @@ if (CT_CUBLAS)
     else()
         message(WARNING "cuBLAS not found")
     endif()
+endif()
+
+if (CT_CLBLAST)
+    find_package(OpenCL)
+
+    target_sources(ctransformers PRIVATE models/ggml/ggml-opencl.cpp)
+    target_compile_definitions(ctransformers PRIVATE GGML_USE_CLBLAST)
+    target_link_libraries(ctransformers PRIVATE OpenCL clblast)
 endif()
 
 # scikit-build
